@@ -1,0 +1,73 @@
+{
+  "name": "vscode-markdown-wysiwyg",
+  "displayName": "Markdown WYSIWYG Editor",
+  "description": "A full rich-text WYSIWYG markdown editor powered by Milkdown",
+  "version": "0.1.0",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "markdownWysiwyg.editor",
+        "displayName": "Markdown WYSIWYG",
+        "selector": [
+          {
+            "filenamePattern": "*.md"
+          },
+          {
+            "filenamePattern": "*.markdown"
+          }
+        ],
+        "priority": "option"
+      }
+    ],
+    "commands": [
+      {
+        "command": "markdownWysiwyg.openWithTextEditor",
+        "title": "Open with Text Editor",
+        "icon": "$(code)"
+      },
+      {
+        "command": "markdownWysiwyg.openWithWysiwyg",
+        "title": "Open with WYSIWYG Editor",
+        "icon": "$(preview)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "markdownWysiwyg.openWithTextEditor",
+          "when": "activeCustomEditorId == markdownWysiwyg.editor",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "markdownWysiwyg.openWithWysiwyg",
+          "when": "resourceExtname == .md",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.21.0",
+    "typescript": "^5.4.0"
+  },
+  "dependencies": {
+    "@milkdown/crepe": "^7.0.0"
+  }
+}
