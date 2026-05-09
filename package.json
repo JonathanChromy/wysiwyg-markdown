@@ -4,6 +4,11 @@
   "description": "A full rich-text WYSIWYG markdown editor powered by Milkdown",
   "version": "0.1.0",
   "publisher": "local",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JonathanChromy/wysiwyg-markdown.git"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -69,7 +74,8 @@
   },
   "devDependencies": {
     "@types/vscode": "^1.85.0",
-    "esbuild": "^0.21.0",
+    "@vscode/vsce": "^3.9.1",
+    "esbuild": "^0.28.0",
     "typescript": "^5.4.0"
   },
   "dependencies": {
