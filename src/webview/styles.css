@@ -211,9 +211,12 @@ body {
   --crepe-color-background: var(--vscode-editor-background);
   --crepe-color-on-background: var(--vscode-editor-foreground);
   --crepe-color-surface: var(--vscode-input-background);
+  --crepe-color-surface-low: var(--vscode-textCodeBlock-background, var(--vscode-editorWidget-background, var(--vscode-input-background)));
   --crepe-color-on-surface: var(--vscode-input-foreground);
+  --crepe-color-on-surface-variant: var(--vscode-descriptionForeground, var(--vscode-input-foreground));
   --crepe-color-primary: var(--vscode-button-background);
   --crepe-color-on-primary: var(--vscode-button-foreground);
+  --crepe-color-secondary: var(--vscode-button-secondaryBackground, var(--vscode-toolbar-hoverBackground, rgba(128, 128, 128, 0.18)));
   --crepe-color-outline: var(--vscode-widget-border, var(--vscode-input-border, #444));
   --crepe-color-muted: color-mix(in srgb, var(--vscode-editor-foreground) 65%, transparent);
   --crepe-color-inline-code: var(--vscode-textCodeBlock-background, var(--vscode-input-background));
@@ -438,6 +441,70 @@ body {
   padding: 0;
   background: transparent;
   border-radius: 0;
+}
+
+.milkdown .milkdown-code-block,
+.crepe .milkdown-code-block {
+  margin: 8px 0;
+  padding: 8px 16px 16px;
+  border: 1px solid var(--vscode-widget-border, var(--vscode-input-border, #444));
+  border-radius: 6px;
+  background: var(--vscode-textCodeBlock-background, var(--vscode-editorWidget-background, var(--vscode-input-background))) !important;
+  color: var(--vscode-editor-foreground) !important;
+}
+
+.milkdown .milkdown-code-block .cm-editor,
+.crepe .milkdown-code-block .cm-editor,
+.milkdown .milkdown-code-block .cm-scroller,
+.crepe .milkdown-code-block .cm-scroller,
+.milkdown .milkdown-code-block .cm-content,
+.crepe .milkdown-code-block .cm-content {
+  background: transparent !important;
+  color: var(--vscode-editor-foreground) !important;
+  font-family: var(--vscode-editor-font-family, var(--vscode-font-family));
+}
+
+.milkdown .milkdown-code-block .cm-gutters,
+.crepe .milkdown-code-block .cm-gutters {
+  background: color-mix(in srgb, var(--vscode-textCodeBlock-background, var(--vscode-editor-background)) 84%, var(--vscode-editor-foreground) 6%) !important;
+  color: var(--vscode-editorLineNumber-foreground, var(--vscode-descriptionForeground)) !important;
+  border-right: 1px solid var(--vscode-widget-border, transparent);
+}
+
+.milkdown .milkdown-code-block .cm-activeLine,
+.crepe .milkdown-code-block .cm-activeLine,
+.milkdown .milkdown-code-block .cm-activeLineGutter,
+.crepe .milkdown-code-block .cm-activeLineGutter {
+  background: var(--vscode-editor-lineHighlightBackground, rgba(128, 128, 128, 0.12)) !important;
+}
+
+.milkdown .milkdown-code-block .cm-selectionBackground,
+.crepe .milkdown-code-block .cm-selectionBackground {
+  background: var(--vscode-editor-selectionBackground, rgba(128, 128, 128, 0.35)) !important;
+}
+
+.milkdown .milkdown-code-block .tools .language-button,
+.crepe .milkdown-code-block .tools .language-button,
+.milkdown .milkdown-code-block .tools .tools-button-group button,
+.crepe .milkdown-code-block .tools .tools-button-group button {
+  background: var(--vscode-button-secondaryBackground, var(--vscode-toolbar-hoverBackground, rgba(128, 128, 128, 0.18))) !important;
+  color: var(--vscode-button-secondaryForeground, var(--vscode-foreground)) !important;
+  border: 1px solid var(--vscode-widget-border, transparent);
+}
+
+.milkdown .milkdown-code-block .tools .language-button:hover,
+.crepe .milkdown-code-block .tools .language-button:hover,
+.milkdown .milkdown-code-block .tools .tools-button-group button:hover,
+.crepe .milkdown-code-block .tools .tools-button-group button:hover {
+  background: var(--vscode-toolbar-hoverBackground, color-mix(in srgb, var(--vscode-button-background) 18%, transparent)) !important;
+}
+
+.milkdown .milkdown-code-block .tools .tools-button-group button svg,
+.crepe .milkdown-code-block .tools .tools-button-group button svg,
+.milkdown .milkdown-code-block .tools .language-button svg,
+.crepe .milkdown-code-block .tools .language-button svg {
+  fill: currentColor !important;
+  color: currentColor !important;
 }
 
 .milkdown .ProseMirror blockquote,
