@@ -18,6 +18,19 @@ let lastKnownContent = typeof vscode.getState()?.content === 'string'
 let pendingProgrammaticContent: string | null = null;
 let releaseLocalEditTimer: number | null = null;
 
+type RemarkMathOptions = {
+  singleDollarTextMath?: boolean;
+};
+
+function disableSingleDollarInlineMath(editor: Crepe['editor']) {
+  editor.config((ctx) => {
+    ctx.update<RemarkMathOptions, 'remarkMath'>('remarkMath', (options) => ({
+      ...options,
+      singleDollarTextMath: false,
+    }));
+  });
+}
+
 function releaseLocalEditGuard() {
   if (releaseLocalEditTimer !== null) {
     window.clearTimeout(releaseLocalEditTimer);
@@ -75,6 +88,7 @@ async function initEditor(content: string) {
       [CrepeFeature.LinkTooltip]: false,
     },
   });
+  disableSingleDollarInlineMath(crepe.editor);
 
   crepe.on((listener) => {
     listener.markdownUpdated((_ctx, markdown, prevMarkdown) => {
