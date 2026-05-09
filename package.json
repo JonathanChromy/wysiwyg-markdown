@@ -10,7 +10,6 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "customEditors": [
@@ -51,7 +50,13 @@
       "explorer/context": [
         {
           "command": "markdownWysiwyg.openWithWysiwyg",
-          "when": "resourceExtname == .md",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "markdownWysiwyg.openWithWysiwyg",
+          "when": "editorLangId == markdown",
           "group": "navigation"
         }
       ]

@@ -1,25 +1,27 @@
 /* -------------------------------------------------------------------------- */
-/* Hide floating/bubble menu - we'll use a pinned toolbar instead             */
+/* Hide ALL floating/bubble UI — we use a pinned toolbar only                 */
 /* -------------------------------------------------------------------------- */
 
 .milkdown .bubble-menu,
 .crepe .bubble-menu,
-.milkdown [role='menu']:not(.toolbar-menu),
-.crepe [role='menu']:not(.toolbar-menu) {
+.milkdown [class*='tooltip'],
+.crepe [class*='tooltip'],
+.milkdown [class*='toolbar']:not(#editor-toolbar),
+.crepe [class*='toolbar']:not(#editor-toolbar) {
   display: none !important;
 }
 
 /* -------------------------------------------------------------------------- */
-/* Pinned toolbar at top                                                      */
+/* Pinned toolbar — Word-style ribbon                                          */
 /* -------------------------------------------------------------------------- */
 
 #editor-toolbar {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 8px 12px;
-  background: var(--vscode-input-background);
+  gap: 2px;
+  padding: 4px 8px;
+  background: var(--vscode-editorGroupHeader-tabsBackground, var(--vscode-input-background));
   border-bottom: 1px solid var(--vscode-widget-border, #444);
   overflow-x: auto;
   overflow-y: hidden;
@@ -27,46 +29,141 @@
 
 #editor-toolbar button {
   flex: 0 0 auto;
-  padding: 6px 10px;
+  padding: 4px;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 4px;
-  color: var(--vscode-input-foreground);
+  border-radius: 3px;
+  color: var(--vscode-icon-foreground, var(--vscode-foreground));
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 32px;
-  height: 32px;
-  font-size: 14px;
-  transition: background-color 0.12s ease, border-color 0.12s ease;
+  width: 28px;
+  height: 28px;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+}
+
+#editor-toolbar button svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  pointer-events: none;
 }
 
 #editor-toolbar button:hover {
-  background: color-mix(in srgb, var(--vscode-button-background) 22%, transparent);
-  border-color: color-mix(in srgb, var(--vscode-widget-border) 50%, transparent);
+  background: var(--vscode-toolbar-hoverBackground, rgba(128, 128, 128, 0.18));
+  border-color: var(--vscode-toolbar-hoverOutline, transparent);
 }
 
-#editor-toolbar button.active {
-  background: var(--vscode-button-background);
-  color: var(--vscode-button-foreground);
+#editor-toolbar button:active {
+  background: var(--vscode-toolbar-activeBackground, rgba(128, 128, 128, 0.3));
+}
+
+#editor-toolbar button:focus-visible,
+#editor-toolbar select:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 1px;
+}
+
+#editor-toolbar button.active,
+#editor-toolbar button[aria-pressed='true'] {
+  background: var(--vscode-toolbar-activeBackground, rgba(128, 128, 128, 0.28));
+  color: var(--vscode-button-background);
+  border-color: var(--vscode-focusBorder, transparent);
 }
 
 #editor-toolbar select {
-  padding: 6px 8px;
-  background: var(--vscode-input-background);
-  color: var(--vscode-input-foreground);
-  border: 1px solid var(--vscode-widget-border, #444);
-  border-radius: 4px;
-  font-size: 14px;
+  padding: 3px 6px;
+  background: var(--vscode-dropdown-background, var(--vscode-input-background));
+  color: var(--vscode-dropdown-foreground, var(--vscode-foreground));
+  border: 1px solid var(--vscode-dropdown-border, var(--vscode-widget-border, #444));
+  border-radius: 3px;
+  font-size: 12px;
+  height: 28px;
   cursor: pointer;
+  min-width: 90px;
 }
 
 .toolbar-separator {
   width: 1px;
-  height: 24px;
-  background: var(--vscode-widget-border, #444);
+  height: 18px;
+  background: var(--vscode-widget-border, #555);
   margin: 0 4px;
+  flex-shrink: 0;
+}
+
+#editor-toolbar button:disabled {
+  opacity: 0.4;
+  cursor: default;
+  background: transparent;
+}
+
+#editor-toolbar button:disabled:hover {
+  background: transparent;
+}
+
+/* Hide table-only controls (buttons + their separator) until the cursor
+   is inside a table */
+#editor-toolbar .table-only {
+  display: none;
+}
+#editor-toolbar.in-table button.table-only {
+  display: flex;
+}
+#editor-toolbar.in-table .toolbar-separator.table-only {
+  display: block;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Insert-table grid picker                                                    */
+/* -------------------------------------------------------------------------- */
+
+.table-picker-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.table-picker-popover {
+  position: fixed;
+  z-index: 1000;
+  padding: 8px;
+  background: var(--vscode-menu-background, var(--vscode-editorWidget-background, #252526));
+  color: var(--vscode-menu-foreground, var(--vscode-foreground));
+  border: 1px solid var(--vscode-menu-border, var(--vscode-widget-border, #454545));
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.table-picker-popover[hidden] {
+  display: none;
+}
+
+.table-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 10), 18px);
+  gap: 2px;
+}
+
+.table-picker-cell {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--vscode-widget-border, #555);
+  background: var(--vscode-input-background, transparent);
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.table-picker-cell.hot {
+  background: var(--vscode-button-background, #0e639c);
+  border-color: var(--vscode-button-background, #0e639c);
+}
+
+.table-picker-label {
+  margin-top: 8px;
+  font-size: 11px;
+  text-align: center;
+  color: var(--vscode-descriptionForeground, var(--vscode-foreground));
+  min-height: 14px;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -446,117 +543,15 @@ body.vscode-light .crepe {
   color-scheme: light;
 }
 
-/* Aggressive dark mode color overrides */
-body.vscode-dark .milkdown,
-body.vscode-dark .crepe {
-  background: var(--vscode-editor-background) !important;
-  color: var(--vscode-editor-foreground) !important;
-}
-
-body.vscode-dark .milkdown *,
-body.vscode-dark .crepe * {
-  background-color: inherit !important;
-  color: var(--vscode-editor-foreground) !important;
-}
-
-/* Force text in editor content */
-body.vscode-dark .milkdown .ProseMirror *,
-body.vscode-dark .crepe .ProseMirror * {
-  color: var(--vscode-editor-foreground) !important;
-}
-
-/* Paragraphs and headings */
-body.vscode-dark .milkdown .ProseMirror p,
-body.vscode-dark .milkdown .ProseMirror h1,
-body.vscode-dark .milkdown .ProseMirror h2,
-body.vscode-dark .milkdown .ProseMirror h3,
-body.vscode-dark .milkdown .ProseMirror h4,
-body.vscode-dark .milkdown .ProseMirror h5,
-body.vscode-dark .milkdown .ProseMirror h6,
-body.vscode-dark .crepe .ProseMirror p,
-body.vscode-dark .crepe .ProseMirror h1,
-body.vscode-dark .crepe .ProseMirror h2,
-body.vscode-dark .crepe .ProseMirror h3,
-body.vscode-dark .crepe .ProseMirror h4,
-body.vscode-dark .crepe .ProseMirror h5,
-body.vscode-dark .crepe .ProseMirror h6 {
-  color: var(--vscode-editor-foreground) !important;
-}
-
-/* Links */
-body.vscode-dark .milkdown .ProseMirror a,
-body.vscode-dark .crepe .ProseMirror a {
-  color: var(--vscode-textLink-foreground) !important;
-}
-
-/* Code blocks and inline code */
-body.vscode-dark .milkdown .ProseMirror code,
-body.vscode-dark .crepe .ProseMirror code,
-body.vscode-dark .milkdown .ProseMirror pre,
-body.vscode-dark .crepe .ProseMirror pre {
-  background: var(--vscode-textCodeBlock-background, var(--vscode-input-background)) !important;
-  color: var(--vscode-editor-foreground) !important;
-}
-
-/* Toolbar and UI elements */
-body.vscode-dark .milkdown .toolbar,
-body.vscode-dark .crepe .toolbar,
-body.vscode-dark .milkdown [role='toolbar'],
-body.vscode-dark .crepe [role='toolbar'],
-body.vscode-dark .milkdown .menu,
-body.vscode-dark .crepe .menu,
-body.vscode-dark .milkdown .tooltip,
-body.vscode-dark .crepe .tooltip,
-body.vscode-dark .milkdown .bubble-menu,
-body.vscode-dark .crepe .bubble-menu {
-  background: var(--vscode-input-background) !important;
-  color: var(--vscode-input-foreground) !important;
-}
-
-/* Toolbar buttons */
-body.vscode-dark .milkdown button,
-body.vscode-dark .crepe button,
-body.vscode-dark .milkdown [role='button'],
-body.vscode-dark .crepe [role='button'] {
-  color: var(--vscode-input-foreground) !important;
-}
-
-body.vscode-dark .milkdown button:hover,
-body.vscode-dark .crepe button:hover,
-body.vscode-dark .milkdown [role='button']:hover,
-body.vscode-dark .crepe [role='button']:hover {
-  background: color-mix(in srgb, var(--vscode-button-background) 22%, transparent) !important;
-}
-
-body.vscode-dark .milkdown button[aria-pressed='true'],
-body.vscode-dark .crepe button[aria-pressed='true'],
-body.vscode-dark .milkdown button.active,
-body.vscode-dark .crepe button.active {
-  background: var(--vscode-button-background) !important;
-  color: var(--vscode-button-foreground) !important;
-}
-
-/* SVG icons in toolbar */
-body.vscode-dark .milkdown svg,
-body.vscode-dark .crepe svg {
-  fill: currentColor;
-  color: var(--vscode-input-foreground) !important;
-}
-
-/* Tables and lists */
-body.vscode-dark .milkdown .ProseMirror table,
-body.vscode-dark .milkdown .ProseMirror li,
-body.vscode-dark .crepe .ProseMirror table,
-body.vscode-dark .crepe .ProseMirror li {
-  color: var(--vscode-editor-foreground) !important;
-}
-
-/* Selection */
-body.vscode-dark .milkdown .ProseMirror ::selection,
-body.vscode-dark .crepe .ProseMirror ::selection {
-  background: var(--vscode-editor-selectionBackground, rgba(128, 128, 128, 0.3)) !important;
-  color: var(--vscode-editor-foreground) !important;
-}
+/* Aggressive dark mode color overrides removed.
+ *
+ * The previous block here used `body.vscode-dark .milkdown *` with
+ * `color: !important`, which destroyed Crepe's intentional colors (links,
+ * code syntax, muted text). The base styles above already wire every Crepe
+ * surface to a `var(--vscode-*)` token, so the bridge works without a
+ * universal override. If a specific Crepe internal leaks the wrong color,
+ * target it surgically here, never `*`.
+ */
 
 body.vscode-high-contrast .milkdown,
 body.vscode-high-contrast .crepe,
@@ -591,4 +586,18 @@ body.vscode-high-contrast .crepe .ProseMirror ::selection,
 body.vscode-high-contrast-light .milkdown .ProseMirror ::selection,
 body.vscode-high-contrast-light .crepe .ProseMirror ::selection {
   background: var(--vscode-editor-selectionBackground, var(--vscode-focusBorder));
+}
+
+/* -------------------------------------------------------------------------- */
+/* Reduced motion                                                             */
+/* -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

@@ -3,13 +3,18 @@ import * as vscode from 'vscode';
 export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
   public static readonly viewType = 'markdownWysiwyg.editor';
 
-  public constructor(private readonly context: vscode.ExtensionContext) {}
+  public constructor(
+    private readonly context: vscode.ExtensionContext,
+    private readonly log: (message: string) => void
+  ) {}
 
   public async resolveCustomTextEditor(
     document: vscode.TextDocument,
     webviewPanel: vscode.WebviewPanel,
     _token: vscode.CancellationToken
   ): Promise<void> {
+    this.log(`Resolving custom editor for ${document.uri.toString()}`);
+
     const { webview } = webviewPanel;
 
     webview.options = {
@@ -29,6 +34,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
         }
 
         if (message.type === 'ready') {
+          this.log(`Webview ready for ${document.uri.fsPath}`);
           await webview.postMessage({ type: 'init', content: document.getText() });
           return;
         }
@@ -46,6 +52,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
 
         isUpdatingFromWebview = true;
         try {
+          this.log(`Applying webview edit to ${document.uri.fsPath}`);
           await vscode.workspace.applyEdit(edit);
         } finally {
           isUpdatingFromWebview = false;
@@ -56,6 +63,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
           return;
         }
 
+        this.log(`Document changed outside webview: ${document.uri.fsPath}`);
         void webview.postMessage({ type: 'update', content: document.getText() });
       }),
       webviewPanel.onDidDispose(() => {
@@ -89,7 +97,7 @@ export class MarkdownEditorProvider implements vscode.CustomTextEditorProvider {
   </head>
   <body>
     <div id="editor-container" style="display: flex; flex-direction: column; width: 100vw; height: 100vh;">
-      <div id="editor-toolbar"></div>
+      <div id="editor-toolbar" role="toolbar" aria-label="Editor formatting"></div>
       <div id="editor"></div>
     </div>
     <script nonce="${nonce}" src="${scriptUri}"></script>

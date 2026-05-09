@@ -6,6 +6,7 @@ out/
 
 # VS Code extension package
 *.vsix
+launch-vscode-extension.log
 
 # OS files
 .DS_Store
